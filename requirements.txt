@@ -5,9 +5,6 @@
 # Core framework (with specific versions that work on Python 3.11)
 streamlit==1.31.0
 
-# PDF processing
-pymupdf==1.23.8
-
 # Data manipulation
 pandas==2.1.4
 numpy==1.26.3
@@ -17,8 +14,9 @@ python-dotenv==1.0.0
 requests==2.31.0
 plotly==5.18.0
 
+# Note: Removed pymupdf (not needed for demo - causes compilation issues)
 # Note: Removed qdrant-client, sentence-transformers, psycopg2-binary, sqlalchemy
-# These have dependency conflicts and aren't needed for the demo version
+# These aren't needed for the demo version
 # This is a simplified demo version - for full functionality deploy to AWS
 
 # Note: We removed these because they're not available or needed on Streamlit Cloud:
