@@ -8,8 +8,8 @@ streamlit==1.31.0
 # PDF processing
 pymupdf
 
-# Vector database
-qdrant-client
+# Vector database (using newer version compatible with Python 3.14)
+qdrant-client>=1.7.0
 
 # Embeddings (for searching documents)
 sentence-transformers
