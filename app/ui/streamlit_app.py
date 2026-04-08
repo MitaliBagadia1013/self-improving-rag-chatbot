@@ -58,6 +58,7 @@
 
 import sys
 from pathlib import Path
+import os
 
 # Add project root to Python path to allow imports
 project_root = Path(__file__).parent.parent.parent
@@ -65,7 +66,15 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 import streamlit as st
-from app.generation.answerer import AnswerGenerator
+
+# Check if running in demo mode (Streamlit Cloud without Ollama)
+DEMO_MODE = os.getenv("STREAMLIT_SHARING", False) or not os.path.exists("/usr/local/bin/ollama")
+
+try:
+    from app.generation.answerer import AnswerGenerator
+except Exception as e:
+    DEMO_MODE = True
+
 from app.analytics.metrics import AnalyticsEngine
 from app.ui.document_manager import render_document_manager
 
