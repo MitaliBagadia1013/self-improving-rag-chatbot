@@ -8,16 +8,6 @@ streamlit==1.31.0
 # PDF processing
 pymupdf
 
-# Vector database (using newer version compatible with Python 3.14)
-qdrant-client>=1.7.0
-
-# Embeddings (for searching documents)
-sentence-transformers
-
-# Database
-psycopg2-binary
-sqlalchemy
-
 # Data manipulation
 pandas
 numpy
@@ -26,7 +16,10 @@ numpy
 python-dotenv
 requests
 plotly
-tqdm
+
+# Note: Removed qdrant-client, sentence-transformers, psycopg2-binary, sqlalchemy
+# These have dependency conflicts on Python 3.14
+# This is a simplified demo version - for full functionality deploy to AWS
 
 # Note: We removed these because they're not available or needed on Streamlit Cloud:
 # - fastapi (we're only running Streamlit, not FastAPI)
