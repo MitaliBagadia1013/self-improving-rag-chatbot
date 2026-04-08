@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+qdrant_storage/
+mlruns/
+*.db
+*.log
+
+# Secrets (already in .streamlit/)
+.env
+secrets.toml
+
+# Data files (too large for git)
+data/raw/*.pdf
+data/processed/*.json
+data/raw/downloaded_papers/
+data/raw/inbox/

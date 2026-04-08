@@ -1,0 +1,36 @@
+# Streamlit Cloud Dependencies
+# This file contains ONLY the packages needed for deployment
+# Why? Streamlit Cloud has limited resources, so we remove heavy/unnecessary packages
+
+# Core framework
+streamlit==1.31.0
+
+# PDF processing
+pymupdf
+
+# Vector database
+qdrant-client
+
+# Embeddings (for searching documents)
+sentence-transformers
+
+# Database
+psycopg2-binary
+sqlalchemy
+
+# Data manipulation
+pandas
+numpy
+
+# Utilities
+python-dotenv
+requests
+plotly
+tqdm
+
+# Note: We removed these because they're not available or needed on Streamlit Cloud:
+# - fastapi (we're only running Streamlit, not FastAPI)
+# - uvicorn (same reason)
+# - openai (we're using Ollama locally)
+# - mlflow (not needed for production)
+# - faiss-cpu (we're using Qdrant)

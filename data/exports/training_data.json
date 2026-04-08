@@ -1,0 +1,12 @@
+[
+  {
+    "interaction_id": 3,
+    "query": "What is retrieval augmented generation?",
+    "answer": "Retrieval Augmented Generation (RAG) refers to models which combine pre-trained parametric and non-parametric memory for language generation. [Source: rag_paper_1.pdf, Page: 9, Chunk ID: rag_paper_1.pdf_p19_c1]",
+    "feedback_label": "hallucination",
+    "feedback_comment": "it is hallucinating a lot",
+    "model_name": "llama3.1:8b",
+    "top_k": 5,
+    "created_at": "2026-04-08 16:28:50.011051"
+  }
+]

@@ -1,0 +1,12 @@
+# Streamlit Cloud - Lightweight Dependencies
+# Remove heavy packages that aren't available on Streamlit Cloud
+
+streamlit
+psycopg2-binary
+qdrant-client
+sentence-transformers
+requests
+plotly
+pandas
+numpy
+torch
