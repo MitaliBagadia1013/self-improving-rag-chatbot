@@ -1,10 +1,30 @@
 """
-Demo Version of Self-Improving RAG Chatbot
-This is a simplified version for Streamlit Cloud deployment
-For full functionality, deploy to AWS EC2
+Self-Improving RAG Chatbot
+Works locally with full RAG functionality
+Shows demo data when deployed to Streamlit Cloud (no Ollama/Qdrant available)
 """
 
+import sys
+from pathlib import Path
+import os
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
 import streamlit as st
+
+# Detect if we're running locally or on cloud
+DEMO_MODE = os.getenv("STREAMLIT_SHARING", False)
+
+# Try to import RAG components (will fail on cloud)
+try:
+    from app.generation.answerer import AnswerGenerator
+    from app.analytics.metrics import AnalyticsEngine
+    DEMO_MODE = False  # We have the dependencies, so not in demo mode
+except Exception as e:
+    DEMO_MODE = True  # Dependencies missing, use demo mode
 
 st.set_page_config(page_title="Self-Improving RAG Chatbot", layout="wide")
 
@@ -19,7 +39,15 @@ if page == "💬 Chat Demo":
     
     st.markdown("---")
     
-    # Simulated chat interface
+    # Initialize the generator
+    if not DEMO_MODE:
+        if "generator" not in st.session_state:
+            st.session_state.generator = AnswerGenerator()
+        
+        if "last_result" not in st.session_state:
+            st.session_state.last_result = None
+    
+    # Query input
     query = st.text_input("Enter your question:", placeholder="e.g., What is retrieval-augmented generation?")
     
     col1, col2 = st.columns([1, 5])
@@ -27,30 +55,68 @@ if page == "💬 Chat Demo":
         ask_button = st.button("Ask", type="primary")
     
     if ask_button and query:
-        st.markdown("### Answer")
-        st.info("""
-        **Demo Response:**
-        
-        In a production deployment, this chatbot would:
-        1. 🔍 Search your document corpus using vector similarity
-        2. 📄 Retrieve the most relevant chunks
-        3. 🤖 Generate an answer using Ollama (local LLM)
-        4. 📚 Provide citations to source documents
-        
-        **Example Answer:**
-        Retrieval-Augmented Generation (RAG) is a technique that combines information retrieval with large language models. 
-        It works by first retrieving relevant documents from a knowledge base, then using those documents as context 
-        for the LLM to generate more accurate and grounded responses.
-        
-        [Source: rag_paper_1.pdf, Page: 3]
-        [Source: transformers_paper_2.pdf, Page: 12]
-        """)
-        
-        st.markdown("### Feedback")
-        st.selectbox("How was this answer?", ["correct", "hallucination", "incomplete", "bad_retrieval"])
-        st.text_area("Optional comment")
-        if st.button("Submit Feedback"):
-            st.success("✅ Thank you for your feedback!")
+        if not DEMO_MODE:
+            # REAL MODE: Use actual RAG system
+            with st.spinner("🔍 Searching documents and generating answer..."):
+                try:
+                    result = st.session_state.generator.answer_question(query, top_k=5)
+                    st.session_state.last_result = result
+                    
+                    st.markdown("### Answer")
+                    st.success(result["answer"])
+                    
+                    st.markdown("### 📚 Retrieved Sources")
+                    for i, chunk in enumerate(result["retrieved_chunks"], 1):
+                        meta = chunk["metadata"]
+                        with st.expander(f"Source {i}: {meta['source']} | Page {meta['page']} | Chunk {meta['chunk_id']}"):
+                            st.write(meta["text"])
+                    
+                    st.markdown("### Feedback")
+                    feedback_label = st.selectbox(
+                        "How was this answer?",
+                        ["correct", "hallucination", "incomplete", "bad_retrieval"],
+                        key="feedback_label"
+                    )
+                    
+                    feedback_comment = st.text_area("Optional comment", key="feedback_comment")
+                    
+                    if st.button("Submit Feedback"):
+                        st.session_state.generator.log_feedback(
+                            interaction_id=result["interaction_id"],
+                            label=feedback_label,
+                            comment=feedback_comment if feedback_comment.strip() else None,
+                        )
+                        st.success("✅ Thank you for your feedback!")
+                        
+                except Exception as e:
+                    st.error(f"❌ Error: {str(e)}")
+                    st.info("Make sure Ollama is running and documents are indexed.")
+        else:
+            # DEMO MODE: Show sample response
+            st.markdown("### Answer")
+            st.info("""
+            **Demo Response:**
+            
+            In a production deployment, this chatbot would:
+            1. 🔍 Search your document corpus using vector similarity
+            2. 📄 Retrieve the most relevant chunks
+            3. 🤖 Generate an answer using Ollama (local LLM)
+            4. 📚 Provide citations to source documents
+            
+            **Example Answer:**
+            Retrieval-Augmented Generation (RAG) is a technique that combines information retrieval with large language models. 
+            It works by first retrieving relevant documents from a knowledge base, then using those documents as context 
+            for the LLM to generate more accurate and grounded responses.
+            
+            [Source: rag_paper_1.pdf, Page: 3]
+            [Source: transformers_paper_2.pdf, Page: 12]
+            """)
+            
+            st.markdown("### Feedback")
+            st.selectbox("How was this answer?", ["correct", "hallucination", "incomplete", "bad_retrieval"])
+            st.text_area("Optional comment")
+            if st.button("Submit Feedback"):
+                st.success("✅ Thank you for your feedback!")
 
 # Analytics Demo
 elif page == "📊 Analytics Demo":
