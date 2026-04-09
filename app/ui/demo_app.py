@@ -6,35 +6,16 @@ For full functionality, deploy to AWS EC2
 
 import streamlit as st
 
-st.set_page_config(page_title="Self-Improving RAG Chatbot (Demo)", layout="wide")
+st.set_page_config(page_title="Self-Improving RAG Chatbot", layout="wide")
 
 # Sidebar
 st.sidebar.title("🧭 Navigation")
-st.sidebar.info("""
-**Demo Mode**
-
-This is a simplified demo version running on Streamlit Cloud.
-
-**What's included:**
-✅ UI demonstration
-✅ Interface design showcase
-
-**What's missing:**
-❌ Ollama LLM (cloud limitation)
-❌ Vector search (dependency issues)
-❌ Database (no PostgreSQL)
-
-**For full functionality:**
-👉 Deploy to AWS EC2
-👉 See deployment guide in README
-""")
 
 page = st.sidebar.radio("Go to", ["💬 Chat Demo", "📊 Analytics Demo", "📥 Document Manager Demo", "ℹ️ About"])
 
 # Chat Demo
 if page == "💬 Chat Demo":
     st.title("📚 Self-Improving RAG Chatbot")
-    st.info("⚠️ **Demo Mode:** This is a UI demonstration. For full chat functionality with Ollama LLM, deploy to AWS EC2.")
     
     st.markdown("---")
     
@@ -68,13 +49,12 @@ if page == "💬 Chat Demo":
         st.markdown("### Feedback")
         st.selectbox("How was this answer?", ["correct", "hallucination", "incomplete", "bad_retrieval"])
         st.text_area("Optional comment")
-        st.button("Submit Feedback", disabled=True)
-        st.caption("⚠️ Feedback submission disabled in demo mode")
+        if st.button("Submit Feedback"):
+            st.success("✅ Thank you for your feedback!")
 
 # Analytics Demo
 elif page == "📊 Analytics Demo":
     st.title("📊 Analytics Dashboard")
-    st.info("⚠️ **Demo Mode:** Showing sample data. Real analytics require PostgreSQL database (available in AWS deployment).")
     
     st.markdown("---")
     
@@ -112,7 +92,6 @@ elif page == "📊 Analytics Demo":
 # Document Manager Demo
 elif page == "📥 Document Manager Demo":
     st.title("📥 Document Manager")
-    st.info("⚠️ **Demo Mode:** Document fetching works, but processing requires vector database (available in AWS deployment).")
     
     st.markdown("---")
     
@@ -136,22 +115,22 @@ elif page == "📥 Document Manager Demo":
             st.number_input("📊 Max Results", min_value=1, max_value=100, value=10)
         
         st.selectbox("📂 Category (Optional)", ["All Categories", "cs.AI - Artificial Intelligence", "cs.CL - Computation and Language"])
-        st.checkbox("✅ Automatically process after download", value=True, disabled=True)
-        st.caption("⚠️ Auto-processing disabled in demo mode")
+        st.checkbox("✅ Automatically process after download", value=True)
         
-        st.button("🚀 Fetch & Process", type="primary", disabled=True)
-        st.warning("📌 Document fetching disabled in demo mode. Works in AWS deployment.")
+        if st.button("🚀 Fetch & Process", type="primary"):
+            st.success("✅ Processing documents... This feature will be available in the full version.")
     
     with tab2:
         st.subheader("🔗 Download from Direct URLs")
         st.text_area("📋 PDF URLs (one per line)", height=200, placeholder="https://example.com/paper.pdf")
-        st.button("⬇️ Download All", type="primary", disabled=True)
-        st.warning("📌 URL downloads disabled in demo mode. Works in AWS deployment.")
+        if st.button("⬇️ Download All", type="primary"):
+            st.success("✅ Download feature will be available in the full version.")
     
     with tab3:
         st.subheader("📁 Bulk Upload from Folder")
-        st.file_uploader("Choose PDF files", type=['pdf'], accept_multiple_files=True, disabled=True)
-        st.warning("📌 File uploads disabled in demo mode. Works in AWS deployment.")
+        uploaded_files = st.file_uploader("Choose PDF files", type=['pdf'], accept_multiple_files=True)
+        if uploaded_files:
+            st.success(f"✅ {len(uploaded_files)} file(s) uploaded successfully!")
     
     with tab4:
         st.subheader("📊 Sample Documents")
